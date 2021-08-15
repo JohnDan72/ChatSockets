@@ -1,16 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat sockets</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <!-- Google Sign In -->
+    <meta name="google-signin-client_id" content="1044740526663-n8st6aeuont8dj9pb5tipq4726eago3l.apps.googleusercontent.com">
+
 </head>
+
 <body class="container">
-    
-    
+
+    <section class="row mt-5">
+        <section class="col-6">
+            <h3>Enviar mensaje</h3>
+            <hr>
+            <input type="text" class="form-control" id="txt_uid" placeholder="uid" autocomplete="off">
+            <input type="text" class="form-control" id="txt_mensaje" placeholder="mensaje" autocomplete="off">
+            
+            <h3 class=" mt-4">Usuarios activos</h3>
+            <hr>
+            <ul id="ulSsuarios">
+
+            </ul>
+        </section>
+        <section class="col-6">
+            <h3>Chat completo</h3>
+            <hr>
+            <ul id="ulMensajes">
+
+            </ul>
+        </section>
+
+        <section class="col-12 text-right mt-4">
+            <button class="btn btn-outline-info" id="btn_logout" onclick="signOut()">
+                Logout
+            </button>
+        </section>
+    </section>
 
     <script src="./socket.io/socket.io.js"></script>
     <script src="./js/chat-client.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <!-- Script Google Sign In -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
+
 </html>
