@@ -28,7 +28,10 @@ const comprobarJWTSocket = async(token) => {
         if (!userAux || !userAux.estado) {
             return null;
         }
-        return userAux;
+        else{
+            return userAux;
+        }
+        
 
     } catch (error) {
         return null

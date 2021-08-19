@@ -26,13 +26,14 @@ const validarJWT = async() => {
 
     const { success, _id, nuevo_token, nombre } = await resp.json();
     if (!success) { window.location = 'index.html'; }
+    localStorage.setItem('token', nuevo_token );
     document.title = nombre;
 
     await conectarSocket();
 }
 
 const conectarSocket = async() => {
-    const socketServer = io({
+    socketServer = io({
         'extraHeaders': {
             'auth-token': localStorage.getItem('token')
         }
@@ -45,24 +46,75 @@ const conectarSocket = async() => {
         console.log("User offline");
     })
 
-    socketServer.on('recibir-mensaje', () => {
-        
-    });
+    socketServer.on('recibir-mensaje', recibirMensaje);
 
-    socketServer.on('usuarios-activos', ( payload ) => {
-        console.log(payload)
-    })
+    socketServer.on('usuarios-activos', dibujarUsuarios)
 
-    socketServer.on('recibir-mensaje-priv', () => {
+    socketServer.on('recibir-mensaje-priv', (payload) => {
+        console.log(payload);
         
     })
 }
+
+// listar usuarios conectados
+const dibujarUsuarios = ( usuarios = [] ) => {
+    console.log(usuarios);
+    
+    let usersHTLM = '';
+
+    usuarios.forEach((elem,ind) => {
+        usersHTLM+= `
+            <li>
+                <p>
+                    <h5 class="text-success"> ${elem.nombre} </h5>
+                    <span>${elem.uid}</span>
+                </p>
+            </li>
+        `;
+    });
+    ulSsuarios.innerHTML = usersHTLM;
+}
+
+// listener para input mensaje
+txt_mensaje.addEventListener('keypress', ({ keyCode }) => {
+    const mensaje = txt_mensaje.value;
+    const uid = txt_uid.value;
+
+
+    if( keyCode !== 13){ return true; }
+    if(mensaje.trim().length === 0){return false;}
+
+    socketServer.emit('enviar-mensaje', { uid , mensaje } );
+    txt_mensaje.value = '';
+});
+
+// recibir mensaje
+const recibirMensaje = ( mensajes = [] ) => {
+    console.log(mensajes);
+
+    let mensajeHTML = '';
+    mensajes.forEach( ({ nombre , mensaje , uid}) => {
+        mensajeHTML+= `
+            <li>
+                <p>
+                    <span class="text-primary"> ${nombre}: </span>
+                    <span>${mensaje}</span>
+                </p>
+            </li>
+        `;
+
+    });
+
+    ulMensajes.innerHTML = mensajeHTML;
+    
+}
+
+
 
 const main = async() => {
     await validarJWT();
 }
 
-main();
 
 
 
@@ -70,17 +122,19 @@ main();
 // const socket = io();
 
 
-async function signOut() {
-    // document.location.href = "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://github.com/";
+function signOut() {
+    localStorage.removeItem('token');
 
-    const resp = await fetch('https://www.google.com/accounts/Logout');
-    // var auth2 = gapi.auth2;
-    // console.log(auth2)
-    // auth2.signOut().then(function() {
-    //     console.log('User signed out.');
-    // });
-    
-    // borrar token del localstorage 
-    // localStorage.removeItem('token');
-    // window.location = './index.html';
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then( () => {
+        console.log('User signed out.');
+        window.location = 'index.html';
+    });
 }
+
+(()=>{
+    gapi.load('auth2', () => {
+        gapi.auth2.init();
+        main();
+    });
+})();
